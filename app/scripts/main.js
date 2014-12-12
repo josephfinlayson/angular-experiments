@@ -1,28 +1,5 @@
 var stateBinder
 
-$.fn.extend({
-    //temporary bind, gets cleared on every state change
-    tbind: function() {
-
-    },
-
-    //angular bind, takes a state and will only be bound on that state
-    abind: function(event, handler, state) {
-        // console.log(this, state, event, handler)
-        console.log(state, event, handler)
-        var $injector = angular.element('body').injector()
-        $injector.get('stateBinder').setEvent(this.selector, state, event, handler)
-    }
-})
-
-$(document).ready(function() {
-    var logEvent = function(event) {
-        console.log("Logged event:", event)
-    }
-
-    $('body').abind('click', logEvent, 'main');
-})
-
 angular.module('experiment', ['ui.router'])
     .config(function($stateProvider) {
         $stateProvider
@@ -38,10 +15,8 @@ angular.module('experiment', ['ui.router'])
             })
 
     })
-    .controller('mainCtrl', function() {
-    })
-    .controller('secondaryCtrl', function() {
-    })
+    .controller('mainCtrl', function() {})
+    .controller('secondaryCtrl', function() {})
     .factory('stateBinder', function() {
         var events
         var obj = {
@@ -62,7 +37,7 @@ angular.module('experiment', ['ui.router'])
         }
         return obj
     })
-    .run(function($rootScope, stateBinder) {
+    .run(function($rootScope, stateBinder, $injector) {
         $rootScope.$on('$stateChangeSuccess', function(_event, stateObject) {
             var events = stateBinder.getEvents()
 
@@ -73,6 +48,20 @@ angular.module('experiment', ['ui.router'])
             }
             if (events) {
                 events.forEach(bindEvents)
+            }
+        })
+
+
+        $.fn.extend({
+            //temporary bind, gets cleared on every state change
+            tbind: function() {
+
+            },
+
+            //angular bind, takes a state and will only be bound on that state
+            abind: function(event, handler, state) {
+                // console.log(this, state, event, handler)
+                $injector.get('stateBinder').setEvent(this.selector, state, event, handler)
             }
         })
 
@@ -87,4 +76,10 @@ angular.module('experiment', ['ui.router'])
             }
         })
 
+    }).run(function() {
+        var logEvent = function(event) {
+            console.log("Logged event:", event)
+        }
+
+        $('body').abind('click', logEvent, 'main');
     })
