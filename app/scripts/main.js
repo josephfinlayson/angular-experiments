@@ -18,28 +18,26 @@ angular.module('experiment', ['ui.router'])
     .controller('mainCtrl', function() {})
     .controller('secondaryCtrl', function() {})
     .factory('stateBinder', function() {
-        var events
         var obj = {
+
+            eventsArray: [],
+            get events() {
+                return this.eventsArray;
+            },
             setEvent: function(selector, state, event, handler) {
-                if (!events) {
-                    events = []
-                }
-                events.push({
+                this.eventsArray.push({
                     selector: selector,
                     state: state,
                     event: event,
                     handler: handler
                 })
             },
-            getEvents: function() {
-                return events;
-            }
         }
         return obj
     })
     .run(function($rootScope, stateBinder, $injector) {
         $rootScope.$on('$stateChangeSuccess', function(_event, stateObject) {
-            var events = stateBinder.getEvents()
+            var events = stateBinder.events
 
             var bindEvents = function(event) {
                 if (stateObject.name === event.state) {
@@ -66,7 +64,7 @@ angular.module('experiment', ['ui.router'])
         })
 
         $rootScope.$on('$stateChangeStart', function(event, stateObject) {
-            var events = stateBinder.getEvents()
+            var events = stateBinder.events
             var unBindEvents = function(event) {
                 $(event.selector).unbind(event.event, event.handler)
 
