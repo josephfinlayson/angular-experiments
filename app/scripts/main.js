@@ -1,5 +1,3 @@
-var stateBinder
-
 angular.module('experiment', ['ui.router'])
     .config(function($stateProvider) {
         $stateProvider
