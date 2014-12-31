@@ -13,10 +13,34 @@ angular.module('experiment', ['ui.router'])
                 templateUrl: '/partial/secondary.html',
                 controller: 'secondaryCtrl'
             })
-
+            .state('simpleForm', {
+                url: '/simpleForm',
+                templateUrl: '/partial/simpleForm.html',
+                controller: 'simpleFormController'
+            })
     })
     .controller('mainCtrl', function() {})
     .controller('secondaryCtrl', function() {})
+    .controller('simpleFormController', function($scope, simpleFormService) {
+        $scope.click = function() {
+            simpleFormService({
+                more: "data"
+            })
+        }
+    })
+    .service('simpleFormService', function($http) {
+        return function(data) {
+            $http.jsonp('http://getsimpleform.com/messages/ajax?form_api_token=fc5ad635836677cc4b15eff1a73e72af', {
+                params: {
+                    'some': 'arbitrary',
+                    'data': 'here',
+                    'or': data //doesn't work properly
+                }
+            }).then(function(a) {
+                console.log(a)
+            })
+        }
+    })
     .factory('stateBinder', function() {
         var obj = {
 
