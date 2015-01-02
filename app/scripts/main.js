@@ -50,6 +50,9 @@ angular.module('experiment', ['ui.router'])
 
             $timeout(function() {
                 console.log(data)
+                data.forEach(function(d) {
+                    console.log(d.get())
+                })
                 $scope.oldData = data
             })
         })
@@ -72,7 +75,10 @@ angular.module('experiment', ['ui.router'])
             set: function(experimentData) {
                 //return promise object
                 return ngData.save({
-                    data: experimentData
+                    test: "experimentData",
+                    data: {
+                        "asd": "asd"
+                    }
                 })
             },
 
