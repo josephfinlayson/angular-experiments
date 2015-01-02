@@ -1,5 +1,7 @@
 angular.module('experiment', ['ui.router'])
-    .config(function($stateProvider) {
+    .config(function($stateProvider, $sceDelegateProvider) {
+        Parse.initialize("kz2K16qPwUyX143ijM7OhWgDNxs6wXBiTkRiyE95", "DsELrqBnPYhxrRjomGYT0CggzcxzNS8W9QltFKwu");
+
         $stateProvider
             .state('main', {
                 url: '/main',
@@ -16,8 +18,16 @@ angular.module('experiment', ['ui.router'])
                 templateUrl: '/partial/simpleForm.html',
                 controller: 'simpleFormController'
             })
+            .state('parse', {
+                url: '/parse',
+                templateUrl: '/partial/parse.html',
+                controller: 'parseController'
+            })
+        $sceDelegateProvider.resourceUrlWhitelist(['self', 'http://getsimpleform.com/**']);
+
     })
-    .controller('mainCtrl', function() {})
+
+.controller('mainCtrl', function() {})
     .controller('secondaryCtrl', function() {})
     .controller('simpleFormController', function($scope, simpleFormService) {
         $scope.click = function() {
@@ -26,18 +36,58 @@ angular.module('experiment', ['ui.router'])
             })
         }
     })
+    .controller('parseController', function($scope, parse, $timeout) {
+        $scope.click = function() {
+            parse.set({
+                "test": "data"
+            }).then(function(data) {
+                console.log(data)
+                $scope.data = data;
+            })
+        }
+
+        parse.get().then(function(data) {
+
+            $timeout(function() {
+                console.log(data)
+                $scope.oldData = data
+            })
+        })
+    })
     .service('simpleFormService', function($http) {
         return function(data) {
-            $http.jsonp('http://getsimpleform.com/messages/ajax?form_api_token=fc5ad635836677cc4b15eff1a73e72af', {
-                params: {
-                    'some': 'arbitrary',
-                    'data': 'here',
-                    'or': data //doesn't work properly
-                }
+            $http.post('http://getsimpleform.com/messages.json?form_api_token=fc5ad635836677cc4b15eff1a73e72af', {
+                'some': 'arbitrary',
+                'data': 'here',
             }).then(function(a) {
                 console.log(a)
             })
         }
+    })
+    .service('parse', function() {
+        var parseModel = Parse.Object.extend('ngData');
+        var ngData = new parseModel();
+        var query = new Parse.Query(parseModel);
+        return {
+            set: function(experimentData) {
+                //return promise object
+                return ngData.save({
+                    data: experimentData
+                })
+            },
+
+            get: function() {
+                return query.find({
+                    success: function(results) {
+                        for (var i = 0; i < results.length; i++) {
+                            //iterate?
+                        }
+                    }
+                })
+
+            }
+        }
+
     })
     .factory('stateBinder', function() {
         var obj = {
