@@ -1,6 +1,7 @@
-angular.module('experiment', ['ui.router'])
+angular.module('experiment', ['ui.router', 'moduleToExtend'])
     .config(function($stateProvider, $sceDelegateProvider) {
-        Parse.initialize("kz2K16qPwUyX143ijM7OhWgDNxs6wXBiTkRiyE95", "DsELrqBnPYhxrRjomGYT0CggzcxzNS8W9QltFKwu");
+
+        Parse.initialize("kz2K16qPwUyX143ijM7OhWgDNxs6wXBiTkRiyE95", "DsELrqBnPYhxrRjomGYT0CggzcxzNS8W9QltFKwu")
 
         $stateProvider
             .state('main', {
@@ -26,8 +27,18 @@ angular.module('experiment', ['ui.router'])
         $sceDelegateProvider.resourceUrlWhitelist(['self', 'http://getsimpleform.com/**']);
 
     })
-
-.controller('mainCtrl', function() {})
+    .service('dataSharer', function() {
+        var widgets = [];
+        return {
+            get: function() {
+                return widgets
+            },
+            set: function(wid) {
+                widgets.push(wid)
+            }
+        }
+    })
+    .controller('mainCtrl', function() {})
     .controller('secondaryCtrl', function() {})
     .controller('simpleFormController', function($scope, simpleFormService) {
         $scope.click = function() {
@@ -39,7 +50,7 @@ angular.module('experiment', ['ui.router'])
     .controller('parseController', function($scope, parse, $timeout) {
         $scope.click = function() {
             parse.set({
-                "test": "data"
+                "data": $scope.formData
             }).then(function(data) {
                 console.log(data)
                 $scope.data = data;
@@ -47,7 +58,6 @@ angular.module('experiment', ['ui.router'])
         }
 
         parse.get().then(function(data) {
-
             $timeout(function() {
                 console.log(data)
                 data.forEach(function(d) {
@@ -55,6 +65,7 @@ angular.module('experiment', ['ui.router'])
                 })
                 $scope.oldData = data
             })
+
         })
     })
     .service('simpleFormService', function($http) {
@@ -70,15 +81,14 @@ angular.module('experiment', ['ui.router'])
     .service('parse', function() {
         var parseModel = Parse.Object.extend('ngData');
         var ngData = new parseModel();
+
         var query = new Parse.Query(parseModel);
         return {
             set: function(experimentData) {
                 //return promise object
                 return ngData.save({
                     test: "experimentData",
-                    data: {
-                        "asd": "asd"
-                    }
+                    data: experimentData
                 })
             },
 
