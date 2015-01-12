@@ -1,4 +1,4 @@
-angular.module('experiment', ['ui.router', 'moduleToExtend'])
+angular.module('experiment', ['ui.router', 'moduleToExtend', 'eventBus'])
     .config(function($stateProvider, $sceDelegateProvider) {
 
         Parse.initialize("kz2K16qPwUyX143ijM7OhWgDNxs6wXBiTkRiyE95", "DsELrqBnPYhxrRjomGYT0CggzcxzNS8W9QltFKwu")

@@ -32,7 +32,9 @@
         <a ui-sref="secondary">secondary</a>
         <a ui-sref="simpleForm">simple form</a>
         <a ui-sref="parse">parse</a>
-        <a ui-sref="inject">inject</a>
+        <a ui-sref="inject">same name</a>
+        <a ui-sref="eventbus">event bus</a>
+
         <ui-view></ui-view>
     </div>
 
@@ -61,9 +63,10 @@
     <script src="../bower_components/bootstrap-sass-official/assets/javascripts/bootstrap/tab.js"></script>
     <!-- endbuild -->
     <!-- inject:js -->
-    <script src="/scripts/moduleToExtend.module.js"></script>
     <script src="/scripts/main.js"></script>
-    <script src="/scripts/instantiate.module.js"></script>
+    <script src="/scripts/sameName.module.js"></script>
+    <script src="/scripts/moduleToExtend.module.js"></script>
+    <script src="/scripts/eventBus.module.js"></script>
     <!-- endinject -->
 
 </body>

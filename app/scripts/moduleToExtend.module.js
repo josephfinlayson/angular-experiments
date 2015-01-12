@@ -12,8 +12,8 @@ angular.module('moduleToExtend', [])
     }).directive('logger', function($rootScope, $compile) {
         // Runs during compile
         return {
-        	//won't work for our use case because we need to make it truly dynamic
-        	//taking from scope
+            //won't work for our use case because we need to make it truly dynamic
+            //taking from scope
             templateUrl: function(elem, attrs) {
                 return attrs.templateUrl || 'partial/blueSquareTemplate.html';
             },
@@ -27,4 +27,29 @@ angular.module('moduleToExtend', [])
 
             }
         }
-    });
+    }).directive('eventBus', function() {
+        // Runs during compile
+        return {
+            scope: {
+                bus: '=?'
+            }, // {} = isolate, true = child, false/undefined = no change
+            templateUrl: 'partial/busTrigger.html',
+            controller: function($scope) {
+                var bus = $scope.bus = $scope.bus || $({})
+
+                bus.on('example', function(e, promise ) {
+                    promise.then(function(data){
+                        console.log(data)
+                    })
+                })
+
+                $scope.trigger = function() {
+                    console.log("triggered")
+                    bus.trigger('trigger', {
+                        important: "data"
+                    })
+                }
+
+            }
+        };
+    })
