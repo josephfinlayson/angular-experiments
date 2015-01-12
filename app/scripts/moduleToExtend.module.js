@@ -18,7 +18,6 @@ angular.module('moduleToExtend', [])
                 return attrs.templateUrl || 'partial/blueSquareTemplate.html';
             },
             controller: function($scope, $element, $attrs, $transclude) {
-
                 this.api = {
                     save: function() {
                         console.log("saving in directive 1")
@@ -32,19 +31,18 @@ angular.module('moduleToExtend', [])
         return {
             scope: {
                 bus: '=?'
-            }, // {} = isolate, true = child, false/undefined = no change
+            },
             templateUrl: 'partial/busTrigger.html',
             controller: function($scope) {
                 var bus = $scope.bus = $scope.bus || $({})
 
-                bus.on('example', function(e, promise ) {
-                    promise.then(function(data){
+                bus.on('example', function(e, promise) {
+                    promise.then(function(data) {
                         console.log(data)
                     })
                 })
 
                 $scope.trigger = function() {
-                    console.log("triggered")
                     bus.trigger('trigger', {
                         important: "data"
                     })
@@ -52,4 +50,19 @@ angular.module('moduleToExtend', [])
 
             }
         };
+    }).directive('sharedObject', function() {
+        return {
+            scope: {
+                object: '=?'
+            },
+            templateUrl: 'partial/objshare.html',
+            controller: function($scope) {
+                var object = $scope.object = $scope.object || {}
+
+                object.log = function() {
+                    console.log("shared object")
+                }
+            }
+
+        }
     })
